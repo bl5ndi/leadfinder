@@ -1,4 +1,4 @@
-# LeadFinder — Neti Labs
+# LeadFinder Neti Labs
 
 Extension Chrome (Manifest V3) de prospection : trouve des entreprises **sans site**, avec un **site obsolète** ou un **site à améliorer**, récupère leurs coordonnées publiques, audite leur site et les classe par score commercial /100.
 
