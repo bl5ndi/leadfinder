@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "LeadFinder — Neti Labs",
+  "short_name": "LeadFinder",
+  "version": "1.0.0",
+  "description": "Prospection : trouve les entreprises sans site ou avec un site à refondre, audite et classe les opportunités.",
+  "action": { "default_popup": "popup.html", "default_title": "LeadFinder" },
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "permissions": ["storage", "unlimitedStorage"],
+  "host_permissions": ["<all_urls>"]
+}

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LeadFinder — Neti Labs</title>
+  <link rel="icon" href="icons/icon48.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+<aside class="side">
+  <div class="brand">
+    <img src="icons/icon48.png" alt="">
+    <div><b>LeadFinder</b><small>Neti Labs</small></div>
+  </div>
+  <nav id="nav">
+    <button data-view="dashboard"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4zm0 7h6v-5H4zm10 0h6v-9h-6zm0-16v5h6V4z"/></svg><span data-i18n="nav.dashboard"></span></button>
+    <button data-view="search"><svg viewBox="0 0 24 24"><path d="M10 4a6 6 0 1 0 3.7 10.7l4.8 4.8 1.4-1.4-4.8-4.8A6 6 0 0 0 10 4zm0 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></svg><span data-i18n="nav.search"></span></button>
+    <button data-view="results"><svg viewBox="0 0 24 24"><path d="M4 5h16v2H4zm0 6h16v2H4zm0 6h10v2H4z"/></svg><span data-i18n="nav.results"></span></button>
+    <button data-view="prospects"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-9C1 8.4 3.3 5 6.7 5c2 0 3.4 1 5.3 3 1.9-2 3.3-3 5.3-3C20.7 5 23 8.4 21.3 12 19 16.6 12 21 12 21z"/></svg><span data-i18n="nav.prospects"></span></button>
+    <button data-view="settings"><svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm8.9 5.5-.1-3 2-1.6-2-3.4-2.4.9a8 8 0 0 0-2.6-1.5L15.4 2h-4l-.4 2.9a8 8 0 0 0-2.6 1.5L6 5.5 4 8.9l2 1.6v3L4 15.1l2 3.4 2.4-.9a8 8 0 0 0 2.6 1.5l.4 2.9h4l.4-2.9a8 8 0 0 0 2.6-1.5l2.4.9 2-3.4z"/></svg><span data-i18n="nav.settings"></span></button>
+  </nav>
+  <div class="side-foot">
+    <div id="statusChip" class="chip" hidden></div>
+    <div class="toggles">
+      <button id="langBtn" class="btn ghost sm"></button>
+      <button id="themeBtn" class="btn ghost sm icon-only" data-i18n-title="theme.toggle"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-.9-.1-1.4A5.5 5.5 0 0 1 13.4 3.1 9 9 0 0 0 12 3z"/></svg></button>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <!-- DASHBOARD -->
+  <section id="v-dashboard" class="view">
+    <header class="vh"><h1 data-i18n="nav.dashboard"></h1></header>
+    <div id="kpis" class="kpis"></div>
+    <div class="grid2">
+      <div class="card"><h3 data-i18n="dash.bySector"></h3><div id="chartSector" class="bars"></div></div>
+      <div class="card"><h3 data-i18n="dash.byCity"></h3><div id="chartCity" class="bars"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3 data-i18n="dash.byCategory"></h3><div id="chartCat" class="bars"></div></div>
+      <div class="card"><h3 data-i18n="dash.top"></h3><div id="topList" class="toplist"></div></div>
+    </div>
+  </section>
+
+  <!-- SEARCH -->
+  <section id="v-search" class="view" hidden>
+    <header class="vh"><h1 data-i18n="search.title"></h1></header>
+    <form id="searchForm" class="card form">
+      <p class="hint" data-i18n="search.src.osm"></p>
+      <div class="grid3">
+        <label><span data-i18n="search.sector"></span><select name="sector" id="sectorSel"></select></label>
+        <label><span data-i18n="search.keyword"></span><input name="keyword" placeholder="pizzeria, plombier…"></label>
+        <label><span data-i18n="search.country"></span><input name="country" value="France"></label>
+        <label class="span2"><span data-i18n="search.cities"></span><input name="cities" placeholder="Lyon, Villeurbanne"></label>
+        <label><span data-i18n="search.postcode"></span><input name="postcode" placeholder="69001"></label>
+      </div>
+      <label><span data-i18n="search.names"></span><textarea name="names" rows="2" placeholder="Restaurant Le Gourmet"></textarea></label>
+      <label class="check"><input type="checkbox" name="autoAudit"><span data-i18n="search.autoAudit"></span></label>
+      <p class="hint" data-i18n="search.hint"></p>
+      <div><button id="searchBtn" class="btn primary" data-i18n="search.go"></button></div>
+    </form>
+    <div class="card"><div id="log" class="log"></div></div>
+  </section>
+
+  <!-- RESULTS / PROSPECTS share the same table layout -->
+  <section id="v-results" class="view list-view" data-list="results" hidden>
+    <header class="vh"><h1 data-i18n="nav.results"></h1><span class="count"></span></header>
+    <div class="toolbar">
+      <input type="search" class="f-text" data-i18n-ph="filter.text">
+      <select class="f-cat"></select><select class="f-prio"></select>
+      <span class="spacer"></span>
+      <button class="btn sm b-audit" data-i18n="btn.audit"></button>
+      <button class="btn sm b-save" data-i18n="btn.save"></button>
+      <button class="btn sm b-csv" data-i18n="btn.csv" data-i18n-title="export.hint"></button>
+      <button class="btn sm b-xlsx" data-i18n="btn.xlsx" data-i18n-title="export.hint"></button>
+    </div>
+    <div class="card table-wrap"><table class="tbl"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <section id="v-prospects" class="view list-view" data-list="prospects" hidden>
+    <header class="vh"><h1 data-i18n="nav.prospects"></h1><span class="count"></span></header>
+    <div class="toolbar">
+      <input type="search" class="f-text" data-i18n-ph="filter.text">
+      <select class="f-cat"></select><select class="f-prio"></select><select class="f-status"></select>
+      <label class="check"><input type="checkbox" class="f-star"><span data-i18n="filter.starred"></span></label>
+      <span class="spacer"></span>
+      <button class="btn sm b-dedupe" data-i18n="btn.dedupe"></button>
+      <button class="btn sm b-audit" data-i18n="btn.audit"></button>
+      <button class="btn sm b-csv" data-i18n="btn.csv" data-i18n-title="export.hint"></button>
+      <button class="btn sm b-xlsx" data-i18n="btn.xlsx" data-i18n-title="export.hint"></button>
+    </div>
+    <div class="card table-wrap"><table class="tbl"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="v-settings" class="view" hidden>
+    <header class="vh"><h1 data-i18n="nav.settings"></h1></header>
+    <form id="settingsForm" class="card form">
+      <h3 data-i18n="set.keys"></h3>
+      <label><span data-i18n="set.psiKey"></span><input name="psiKey" type="password" autocomplete="off" spellcheck="false"></label>
+      <label class="check"><input type="checkbox" name="usePsi"><span data-i18n="set.usePsi"></span></label>
+      <p class="hint" data-i18n="set.keysHelp"></p>
+      <div><button class="btn primary" data-i18n="btn.saveSettings"></button></div>
+    </form>
+    <div class="card form">
+      <h3 data-i18n="set.data"></h3>
+      <p class="hint" data-i18n="set.dataHelp"></p>
+      <div class="row-btns">
+        <button id="dedupeBtn" class="btn" data-i18n="btn.dedupe"></button>
+        <button id="clearBtn" class="btn danger" data-i18n="btn.clear"></button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="sheetBackdrop" class="backdrop" hidden></div>
+<aside id="sheet" class="sheet" hidden></aside>
+<div id="toast" class="toast" role="status"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

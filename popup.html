@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="app.css">
+  <style>
+    body { display: block; width: 300px; height: auto; padding: 16px; }
+    .kpis { grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0; }
+    .kpi { padding: 10px 12px; } .kpi b { font-size: 22px; }
+    .btn.primary { width: 100%; justify-content: center; }
+    .brand { padding: 0; }
+  </style>
+</head>
+<body>
+  <div class="brand"><img src="icons/icon48.png" alt=""><div><b>LeadFinder</b><small>Neti Labs</small></div></div>
+  <div id="kpis" class="kpis"></div>
+  <button id="open" class="btn primary" data-i18n="popup.open"></button>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
