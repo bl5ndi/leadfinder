@@ -258,6 +258,7 @@ async function runSearch(e) {
       try {
         const list = await searchOsm({ sector: f.sector, name: name || f.keyword.trim(), city, postcode: f.postcode.trim(), country: f.country.trim(), lang: getLang() });
         if (sectorLabel) list.forEach(b => { b.sector ||= sectorLabel; });
+        if (list.area) log(t('log.area', { a: list.area }));
         found.push(...list);
         log(t('log.found', { n: list.length }));
       } catch (err) { log(t('log.error', { e: err.message }), 'err'); }

@@ -18,12 +18,9 @@ export async function searchOsm({ sector, name, city, postcode, country, lang = 
     return searchByName(name, lang);
   }
 
-  const geo = await (await fetch(`${NOMINATIM}?${new URLSearchParams({ format: 'json', limit: 1, q: place, 'accept-language': lang })}`)).json();
-  if (!geo[0]) throw new Error(`OpenStreetMap: zone introuvable « ${place} »`);
-  const g = geo[0];
-  const areaId = g.osm_type === 'relation' ? 3600000000 + Number(g.osm_id) : null;
-  const [s, n, w, e] = g.boundingbox;
-  const scope = areaId ? '(area.a)' : `(${s},${w},${n},${e})`;
+  const g = await geocode(place, lang);
+  const areaId = g.relation ? 3600000000 + Number(g.relation) : null;
+  const scope = areaId ? '(area.a)' : `(${g.bbox.join(',')})`;
 
   const nameF = name ? `["name"~"${reEsc(name)}",i]` : '["name"]';
   const filters = sector ? SECTORS[sector].osm : ALL;
@@ -38,7 +35,24 @@ export async function searchOsm({ sector, name, city, postcode, country, lang = 
   if (!res?.ok) throw new Error(`Overpass: HTTP ${res?.status ?? 'réseau'} (serveurs surchargés, réessayez dans 1 min)`);
   const j = await res.json();
   const label = sector ? SECTORS[sector][lang] || SECTORS[sector].fr : '';
-  return (j.elements || []).map(el => fromOsm(el, label, areaId ? city : '', country));
+  const list = (j.elements || []).map(el => fromOsm(el, label, areaId && city && !g.fuzzy ? g.name : '', country));
+  list.area = g.label; // shown in the log so a typo-corrected area can be checked
+  return list;
+}
+
+/** Area lookup: Nominatim (exact), then Photon (OSM-based, tolerates typos like "Fezrizaj" → Ferizaj). */
+async function geocode(place, lang) {
+  const nom = await (await fetch(`${NOMINATIM}?${new URLSearchParams({ format: 'json', limit: 1, q: place, 'accept-language': lang })}`)).json();
+  if (nom[0]) {
+    const [s, n, w, e] = nom[0].boundingbox;
+    return { relation: nom[0].osm_type === 'relation' && nom[0].osm_id, bbox: [s, w, n, e], name: nom[0].name, label: nom[0].display_name };
+  }
+  const ph = await fetch(`https://photon.komoot.io/api/?${new URLSearchParams({ q: place, limit: 1 })}`).then(r => r.json()).catch(() => null);
+  const f = ph?.features?.[0];
+  if (!f) throw new Error(`OpenStreetMap : zone introuvable « ${place} », vérifiez l'orthographe`);
+  const p = f.properties, [lon, lat] = f.geometry.coordinates;
+  const [w, n, e, s] = p.extent || [lon - 0.02, lat + 0.02, lon + 0.02, lat - 0.02];
+  return { fuzzy: true, relation: p.osm_type === 'R' && p.osm_id, bbox: [s, w, n, e], name: p.name, label: [p.name, p.country].filter(Boolean).join(', ') };
 }
 
 /** No location given: worldwide search of a business by name (Nominatim, with phone/website tags). */
