@@ -4,9 +4,10 @@ Extension Chrome (Manifest V3) de prospection : trouve des entreprises **sans si
 
 ## Installation dans Chrome
 
+0. Sur cette page GitHub : bouton vert **Code → Download ZIP**, puis décompressez le fichier (clic droit → Extraire tout).
 1. Ouvrez `chrome://extensions`.
 2. Activez **Mode développeur** (en haut à droite).
-3. Cliquez **Charger l'extension non empaquetée** et choisissez le dossier `leadfinder` (celui qui contient `manifest.json`).
+3. Cliquez **Charger l'extension non empaquetée** et choisissez le dossier décompressé (celui qui contient `manifest.json`).
 4. Épinglez l'icône LeadFinder (pièce de puzzle → épingle). Cliquez dessus → **Ouvrir le tableau de bord**.
 
 Après une modification du code : bouton ↻ sur la carte de l'extension dans `chrome://extensions`, puis rechargez l'onglet LeadFinder.
