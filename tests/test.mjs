@@ -55,6 +55,13 @@ assert.equal(s.category, 'outdated', 'non-responsive → outdated');
 assert.ok(s.reasons.some(r => r.k === 'chk.viewport'));
 assert.ok(s.reasons.some(r => r.k === 'r.partialAudit'));
 
+// good average but one very weak area → to improve, not "good"
+const perfChecks = [{ cat: 'performance', id: 'psiPerf', w: 5, v: 0.3 }, { cat: 'seo', id: 'title', w: 3, v: 1 },
+  { cat: 'mobile', id: 'viewport', w: 4, v: 1 }, { cat: 'design', id: 'flash', w: 3, v: 1 }, { cat: 'security', id: 'https', w: 4, v: 1 }];
+const ps = categoryScores(perfChecks);
+assert.ok(ps.global >= 75, 'global hides the weak area: ' + ps.global);
+assert.equal(scoreBusiness({ name: 'P', website: 'x', audit: { ok: true, checks: perfChecks, scores: ps, psi: {} } }).category, 'improve');
+
 // export
 const t = (k, p) => p ? `${k}(${JSON.stringify(p)})` : k;
 const list = Object.values(store).map(x => Object.assign(x, scoreBusiness(x)));

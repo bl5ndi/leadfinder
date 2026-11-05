@@ -52,7 +52,9 @@ export function scoreBusiness(b) {
     const sc = b.audit.scores;
     s = add('r.auditGap', 100 - sc.global, { g: sc.global });
     const outdated = (sc.mobile != null && sc.mobile < 50) || (sc.design != null && sc.design < 50);
-    category = outdated ? 'outdated' : sc.global < 75 ? 'improve' : 'good';
+    // An average can hide one very weak area (e.g. 6 s load time): any category < 50 means "to improve".
+    const weak = ['performance', 'seo', 'security'].some(c => sc[c] != null && sc[c] < 50);
+    category = outdated ? 'outdated' : sc.global < 75 || weak ? 'improve' : 'good';
     if (outdated) s += add('r.outdated', 15);
     if (contactable) s += add('r.contactable', 5);
     if (b.reviews >= 20) s += add('r.activeReviews', 5, { n: b.reviews });
