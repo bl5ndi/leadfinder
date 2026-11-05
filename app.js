@@ -1,4 +1,4 @@
-// LeadFinder dashboard — UI layer only. Data, audit, scoring, storage and export live in src/.
+// LeadFinder dashboard: UI layer only. Data, audit, scoring, storage and export live in src/.
 import { t, setLang, getLang, applyI18n } from './src/i18n.js';
 import { get, set, DEFAULT_SETTINGS } from './src/storage.js';
 import { SECTORS } from './src/sectors.js';
@@ -40,7 +40,7 @@ function toast(msg) {
 }
 
 function log(msg, cls = '') {
-  $('#log').insertAdjacentHTML('beforeend', `<div class="${cls}">${esc(new Date().toLocaleTimeString())} — ${esc(msg)}</div>`);
+  $('#log').insertAdjacentHTML('beforeend', `<div class="${cls}">${esc(new Date().toLocaleTimeString())} · ${esc(msg)}</div>`);
   $('#log').scrollTop = 1e9;
   const chip = $('#statusChip');
   chip.hidden = false; chip.textContent = msg;
@@ -172,7 +172,7 @@ function row(b, view) {
     <td>${b.phone ? esc(b.phone) : na}<small class="sub">${esc(b.email || '')}</small></td>
     <td>${siteCell(b)}</td>
     <td><span class="badge cat-${cat}">${t('cat.' + cat)}</span></td>
-    <td><span class="score p-${prio}" title="${t('prio.' + prio)}">${b.score ?? '—'}</span></td>
+    <td><span class="score p-${prio}" title="${t('prio.' + prio)}">${b.score ?? '-'}</span></td>
     ${view === 'prospects' ? `<td><span class="badge st-${b.status}">${t('st.' + b.status)}</span></td>` : ''}
     <td class="acts">
       <button class="ib open" title="${t('btn.sheet')}">${ICON.open}</button>
@@ -243,8 +243,8 @@ async function runSearch(e) {
   f.autoAudit = form.autoAudit.checked;
   S.settings.autoAudit = f.autoAudit; saveSettings();
   const cities = split(f.cities, /[,;\n]/), names = split(f.names, /\n/);
-  if (!f.sector && !f.keyword.trim() && !names.length) return toast(t('search.needWhat'));
-  if (!cities.length && !f.postcode.trim() && !f.country.trim()) return toast(t('search.needWhere'));
+  const hasWhere = cities.length || f.postcode.trim() || f.country.trim();
+  if (!hasWhere && !f.keyword.trim() && !names.length) return toast(t(f.sector ? 'search.needWhere' : 'search.needAny'));
 
   const btn = $('#searchBtn');
   btn.disabled = true; btn.textContent = t('search.running');
@@ -342,7 +342,7 @@ function renderSheet() {
   </header>
   <div class="sh-body">
     <section class="sh-score">
-      <div class="ring p-${prio}"><b>${b.score ?? '—'}</b><small>/100</small></div>
+      <div class="ring p-${prio}"><b>${b.score ?? '-'}</b><small>/100</small></div>
       <div><div class="badges"><span class="badge pr-${prio}">${t('prio.' + prio)}</span><span class="badge cat-${b.category || 'pending'}">${t('cat.' + (b.category || 'pending'))}</span></div>
       <h4>${t('sheet.reasons')}</h4><ul class="reasons">${reasons}</ul></div>
     </section>
@@ -391,8 +391,8 @@ function auditHtml(b) {
       : `<div class="bt"><i class="${v >= 75 ? 'good' : v >= 50 ? 'mid' : 'bad'}" style="width:${v}%"></i></div><b>${v}</b>`}</div>`;
   }).join('');
   const psi = a.psi
-    ? `<p class="small">${t('sheet.psi')} — Perf ${a.psi.perf ?? '—'} · A11y ${a.psi.acc ?? '—'} · SEO ${a.psi.seo ?? '—'} · BP ${a.psi.bp ?? '—'}${a.psi.field ? ` · ${t('sheet.field', { c: a.psi.field })}` : ''}</p>`
-    : `<p class="small muted">${t('sheet.psiMissing', { e: a.psiError || '—' })}</p>`;
+    ? `<p class="small">${t('sheet.psi')} : Perf ${a.psi.perf ?? '-'} · A11y ${a.psi.acc ?? '-'} · SEO ${a.psi.seo ?? '-'} · BP ${a.psi.bp ?? '-'}${a.psi.field ? ` · ${t('sheet.field', { c: a.psi.field })}` : ''}</p>`
+    : `<p class="small muted">${t('sheet.psiMissing', { e: a.psiError || '-' })}</p>`;
   const issues = issuesOf(a);
   return `<div class="meters">${meters}</div>${psi}
     <p class="small muted">${t('sheet.auditedAt', { d: new Date(a.at).toLocaleString() })} · ${t('sheet.checked', { n: a.checks.filter(c => c.v != null).length })}</p>

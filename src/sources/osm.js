@@ -1,4 +1,4 @@
-// OpenStreetMap — free, no key. Nominatim (geocoding) + Overpass (business search).
+// OpenStreetMap: free, no key. Nominatim (geocoding) + Overpass (business search).
 // Data © OpenStreetMap contributors, ODbL. Usage policies: max ~1 req/s on Nominatim, be gentle with Overpass.
 import { SECTORS } from '../sectors.js';
 
@@ -6,10 +6,17 @@ const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
 const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter', 'https://overpass.private.coffee/api/interpreter','https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
 const SRC = 'OpenStreetMap';
 
+// "All businesses" when no sector is chosen: named shops, trades, offices and commercial places.
+const ALL = ['shop', 'craft', 'office', 'healthcare', 'tourism~"^(hotel|guest_house|motel|hostel)$"', 'leisure~"^(fitness_centre|sports_centre)$"',
+  'amenity~"^(restaurant|fast_food|cafe|bar|pub|dentist|doctors|clinic|pharmacy|car_wash|car_rental|veterinary|driving_school)$"'];
+const BUSINESS_CLASSES = ['shop', 'craft', 'office', 'healthcare', 'tourism', 'leisure', 'amenity'];
+
 export async function searchOsm({ sector, name, city, postcode, country, lang = 'fr', limit = 300 }) {
   const place = [postcode, city, country].filter(Boolean).join(', ');
-  if (!place) throw new Error('OpenStreetMap: ville, code postal ou pays requis');
-  if (!sector && !name) throw new Error('OpenStreetMap: secteur ou nom requis');
+  if (!place) {
+    if (!name) throw new Error('OpenStreetMap : indiquez une ville, un code postal ou un pays pour chercher un secteur');
+    return searchByName(name, lang);
+  }
 
   const geo = await (await fetch(`${NOMINATIM}?${new URLSearchParams({ format: 'json', limit: 1, q: place, 'accept-language': lang })}`)).json();
   if (!geo[0]) throw new Error(`OpenStreetMap: zone introuvable « ${place} »`);
@@ -19,9 +26,9 @@ export async function searchOsm({ sector, name, city, postcode, country, lang = 
   const scope = areaId ? '(area.a)' : `(${s},${w},${n},${e})`;
 
   const nameF = name ? `["name"~"${reEsc(name)}",i]` : '["name"]';
-  const filters = sector ? SECTORS[sector].osm : [''];
+  const filters = sector ? SECTORS[sector].osm : ALL;
   const ql = `[out:json][timeout:60];${areaId ? `area(id:${areaId})->.a;` : ''}(${filters
-    .map(f => `nwr${f ? `[${f}]` : ''}${nameF}${scope};`).join('')});out tags center ${limit};`;
+    .map(f => `nwr[${f}]${nameF}${scope};`).join('')});out tags center ${limit};`;
 
   let res;
   for (const endpoint of OVERPASS) { // public instances are often busy: try the next mirror
@@ -32,6 +39,21 @@ export async function searchOsm({ sector, name, city, postcode, country, lang = 
   const j = await res.json();
   const label = sector ? SECTORS[sector][lang] || SECTORS[sector].fr : '';
   return (j.elements || []).map(el => fromOsm(el, label, areaId ? city : '', country));
+}
+
+/** No location given: worldwide search of a business by name (Nominatim, with phone/website tags). */
+async function searchByName(name, lang) {
+  const q = new URLSearchParams({ format: 'jsonv2', limit: 40, q: name, extratags: 1, addressdetails: 1, 'accept-language': lang });
+  const res = await fetch(`${NOMINATIM}?${q}`);
+  if (!res.ok) throw new Error(`Nominatim: HTTP ${res.status}`);
+  return (await res.json()).filter(r => BUSINESS_CLASSES.includes(r.category)).map(r => {
+    const a = r.address || {};
+    const city = a.city || a.town || a.village || a.municipality || '';
+    return fromOsm({ type: r.osm_type, id: r.osm_id, tags: {
+      ...r.extratags, name: r.name, [r.category]: r.type,
+      'addr:street': a.road, 'addr:housenumber': a.house_number, 'addr:postcode': a.postcode, 'addr:city': city,
+    } }, '', '', a.country || '');
+  });
 }
 
 // Escape for an Overpass regex inside double quotes.

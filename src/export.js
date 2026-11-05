@@ -21,7 +21,7 @@ export function toRows(list, t) {
       issues: issuesOf(b.audit).slice(0, 8).map(c => t('chk.' + c.id, c.p)).join(' | '),
       status: t('st.' + (b.status || 'new')),
       interesting: b.interesting ? '✓' : '',
-      history: (b.history || []).map(h => `${h.date} — ${h.text}`).join(' | '),
+      history: (b.history || []).map(h => `${h.date} : ${h.text}`).join(' | '),
       sources: Object.entries(b.src || {}).map(([k, s]) => `${k}: ${s === 'gen' ? t('sheet.genLink') : s === 'site' ? t('sheet.fromSite') : s}`).join(' | '),
     };
     return COLS.map(c => (c === 'interesting' || c === 'notes' || c === 'lastContact') ? (cell[c] ?? '') : val(cell[c]));
@@ -67,7 +67,7 @@ export function toXlsx(rows, sheetName = 'Prospects') {
 const CRC = new Uint32Array(256).map((_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; return c; });
 const crc32 = d => { let c = ~0; for (const b of d) c = CRC[(c ^ b) & 0xff] ^ (c >>> 8); return ~c >>> 0; };
 
-/** Minimal ZIP writer, "stored" (no compression) — enough for xlsx. */
+/** Minimal ZIP writer, "stored" (no compression), enough for xlsx. */
 function zipStore(files) {
   const enc = new TextEncoder(), parts = [], central = [];
   let offset = 0;

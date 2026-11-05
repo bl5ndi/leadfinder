@@ -1,4 +1,4 @@
-// Run: node tests/test.mjs  — checks pure modules (processing, scoring, export).
+// Run: node tests/test.mjs (checks pure modules processing, scoring, export).
 import assert from 'node:assert/strict';
 import { writeFileSync } from 'node:fs';
 import { mergeAll, dedupeStore, normalize } from '../src/process.js';

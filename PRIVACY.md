@@ -1,4 +1,4 @@
-# Politique de confidentialité — LeadFinder
+# Politique de confidentialité : LeadFinder
 
 *Dernière mise à jour : 5 novembre 2026*
 
@@ -20,7 +20,7 @@ L'extension envoie des requêtes directement depuis votre navigateur, uniquement
 
 | Service | Données envoyées | Pourquoi |
 |---|---|---|
-| OpenStreetMap — Nominatim et Overpass | ville, code postal, pays, secteur, mot-clé recherchés | trouver des entreprises |
+| OpenStreetMap (Nominatim et Overpass) | ville, code postal, pays, secteur, mot-clé recherchés | trouver des entreprises |
 | Google PageSpeed Insights | adresse du site audité, et votre clé API si vous en avez une | mesurer les performances du site |
 | Sites internet des entreprises | requêtes HTTP classiques vers leur page d'accueil, page contact, robots.txt et sitemap | réaliser l'audit |
 
@@ -36,6 +36,6 @@ Pour toute question : https://github.com/bl5ndi/leadfinder/issues
 
 ---
 
-# Privacy policy — LeadFinder (English)
+# Privacy policy : LeadFinder (English)
 
 LeadFinder stores all data (public business information, your notes and settings, your optional PageSpeed API key) **only locally in your browser** (`chrome.storage.local`). The publisher collects, sells and shares no data; there is no account, server, analytics or advertising. The extension only contacts OpenStreetMap (search terms), Google PageSpeed Insights (URL of the audited website and your optional key) and the audited businesses' public websites, directly from your browser, when you use it. You can delete any business, erase all data in Settings, or uninstall the extension to remove everything. Contact: https://github.com/bl5ndi/leadfinder/issues

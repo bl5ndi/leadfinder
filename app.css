@@ -107,7 +107,7 @@ textarea { resize: vertical; }
 .btn svg { width: 15px; height: 15px; }
 .row-btns { display: flex; flex-wrap: wrap; gap: 8px; }
 .log { max-height: 260px; overflow: auto; font: 12.5px/1.6 ui-monospace, "Cascadia Code", Consolas, monospace; color: var(--muted); }
-.log:empty::before { content: "—"; }
+.log:empty::before { content: "-"; }
 .log .err { color: var(--bad); }
 
 /* Tables */
@@ -188,6 +188,7 @@ label.block { margin-top: 14px; }
 .history { list-style: none; padding: 0; margin: 10px 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
 .history time { color: var(--muted); font-size: 12px; margin-right: 8px; font-variant-numeric: tabular-nums; }
 
+.copy { display: block; color: var(--muted); font-size: 11.5px; text-align: center; margin: 10px 0 0; }
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 13.5px; transition: opacity .2s, transform .2s; z-index: 20; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 

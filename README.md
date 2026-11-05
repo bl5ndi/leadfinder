@@ -28,7 +28,7 @@ Limite de la gratuité : OpenStreetMap est moins complet que Google. Beaucoup de
 
 ## Clé API (gratuite)
 
-### Google PageSpeed Insights — pour mesurer performances et Core Web Vitals
+### Google PageSpeed Insights, pour mesurer performances et Core Web Vitals
 1. Allez sur https://console.cloud.google.com/ et créez un projet (ex. « LeadFinder »). Aucune facturation à activer.
 2. **API et services → Bibliothèque** → **PageSpeed Insights API** → **Activer**.
 3. **API et services → Identifiants → Créer des identifiants → Clé API** → restreignez-la à *PageSpeed Insights API*.
@@ -38,9 +38,9 @@ Sans clé, l'API utilise un quota partagé presque toujours épuisé : l'audit f
 
 ## Fonctionnement
 
-**Recherche** : secteur (16 secteurs prédéfinis) ou mot-clé, noms d'entreprises (un par ligne), une ou plusieurs villes (séparées par des virgules), code postal, pays. Chaque combinaison ville × nom lance une requête. Les doublons sont fusionnés (même ID OSM, même téléphone, ou même nom + code postal/ville) sans jamais écraser vos notes.
+**Recherche** (tous les champs sont facultatifs, dans tous les pays : France, Kosovo…) : secteur (16 secteurs prédéfinis) ou mot-clé, noms d'entreprises (un par ligne), une ou plusieurs villes (séparées par des virgules), code postal, pays. Chaque combinaison ville × nom lance une requête. Les doublons sont fusionnés (même ID OSM, même téléphone, ou même nom + code postal/ville) sans jamais écraser vos notes.
 
-**Audit** (lancé automatiquement si un site est trouvé, 3 sites en parallèle) — note /100 par catégorie :
+**Audit** (lancé automatiquement si un site est trouvé, 3 sites en parallèle) : note /100 par catégorie :
 - *Design & UX* : balises HTML obsolètes, Flash, mise en page en tableaux, appel à l'action (tél., e-mail, formulaire), navigation, ancienneté du copyright (simple indice, poids faible).
 - *Mobile* : balise viewport, largeurs fixes, accessibilité mobile Lighthouse.
 - *Performances* : temps de réponse, poids HTML, lazy-loading ; avec PageSpeed : score, LCP, CLS, TBT, poids total, images, Core Web Vitals utilisateurs réels si Google les a.
